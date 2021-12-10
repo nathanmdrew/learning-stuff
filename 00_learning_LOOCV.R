@@ -33,7 +33,7 @@ l1 <- train(medvqrt ~ crim+zn+indus+chas+nox+rm+age+dis+rad+tax+ptratio+black+ls
             method="rf",
             data=d,
             trControl=trainControl(method="LOOCV")
-            ) #~9 minutes
+) #~9 minutes
 
 l1
 
@@ -82,6 +82,17 @@ for (ii in 1:nrow(d)){
   
 } #about 5 minutes
 
+#saveRDS(save.rf, file="C:/Users/vom8/OneDrive - CDC/+My_Documents/MyLargeWorkspace Backup/ENM Categories/Framework Update 2021/00_learning_LOOCV/rflist.rds")
+#saveRDS(save.pred, file="C:/Users/vom8/OneDrive - CDC/+My_Documents/MyLargeWorkspace Backup/ENM Categories/Framework Update 2021/00_learning_LOOCV/predlist.rds")
+#saveRDS(l1, file="C:/Users/vom8/OneDrive - CDC/+My_Documents/MyLargeWorkspace Backup/ENM Categories/Framework Update 2021/00_learning_LOOCV/caret_loo.rds")
+#saveRDS(d, file="C:/Users/vom8/OneDrive - CDC/+My_Documents/MyLargeWorkspace Backup/ENM Categories/Framework Update 2021/00_learning_LOOCV/d.rds")
+
+save.rf <- readRDS(file="C:/Users/vom8/OneDrive - CDC/+My_Documents/MyLargeWorkspace Backup/ENM Categories/Framework Update 2021/00_learning_LOOCV/rflist.rds")
+save.pred <- readRDS(file="C:/Users/vom8/OneDrive - CDC/+My_Documents/MyLargeWorkspace Backup/ENM Categories/Framework Update 2021/00_learning_LOOCV/predlist.rds")
+l1 <- readRDS(file="C:/Users/vom8/OneDrive - CDC/+My_Documents/MyLargeWorkspace Backup/ENM Categories/Framework Update 2021/00_learning_LOOCV/caret_loo.rds")
+d <- readRDS(file="C:/Users/vom8/OneDrive - CDC/+My_Documents/MyLargeWorkspace Backup/ENM Categories/Framework Update 2021/00_learning_LOOCV/d.rds")
+
+
 #extract predictions
 p <- as.vector(unlist(save.pred))
 d$pred3 <- as.factor(p)
@@ -99,3 +110,20 @@ v1[1,2]
 v2 <- varImpPlot(save.rf[[2]])
 v2
 v2[1,2]
+
+save.imps <- vector(mode="list", length=nrow(d))
+for (jj in 1:nrow(d)) {
+  save.imps[[jj]] <- varImpPlot(save.rf[[jj]])
+}
+
+temp <- unlist(save.imps)
+temp #13 variables, as used in RF call -- [1,13]=acc  [14,26]=gini
+13*2*506 #13156, 13vars*2imp measures*506 models = length of unlisted
+temp <- as.data.frame(temp)
+temp$i <- rep(seq(1:26),506)
+
+#example - average mean decrease accuracy for CRIM
+var1 <- temp %>% filter(i==1) %>% summarize(avg_meandecreaseacc=mean(temp))
+
+temp2 <- varImpPlot(rf2)
+temp2 #avg=24.86568, from rf2 is 24.59434
