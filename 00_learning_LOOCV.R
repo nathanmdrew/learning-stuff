@@ -116,6 +116,9 @@ for (jj in 1:nrow(d)) {
   save.imps[[jj]] <- varImpPlot(save.rf[[jj]])
 }
 
+#saveRDS(save.imps, file="C:/Users/vom8/OneDrive - CDC/+My_Documents/MyLargeWorkspace Backup/ENM Categories/Framework Update 2021/00_learning_LOOCV/implist.rds")
+save.imps <- readRDS(file="C:/Users/vom8/OneDrive - CDC/+My_Documents/MyLargeWorkspace Backup/ENM Categories/Framework Update 2021/00_learning_LOOCV/implist.rds")
+
 temp <- unlist(save.imps)
 temp #13 variables, as used in RF call -- [1,13]=acc  [14,26]=gini
 13*2*506 #13156, 13vars*2imp measures*506 models = length of unlisted
