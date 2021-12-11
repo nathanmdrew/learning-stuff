@@ -126,7 +126,51 @@ temp <- as.data.frame(temp)
 temp$i <- rep(seq(1:26),506)
 
 #example - average mean decrease accuracy for CRIM
+var1 <- temp %>% filter(i==1) %>% ggplot(aes(x=temp)) + geom_histogram() + 
+xlab(paste0("V",kk," MeanDecreaseAccuracy")) + 
+       ggtitle("Histogram of MeanDecreaseAccuracy", subtitle=paste0("V",kk))
+var1
 var1 <- temp %>% filter(i==1) %>% summarize(avg_meandecreaseacc=mean(temp))
+var1
+
 
 temp2 <- varImpPlot(rf2)
 temp2 #avg=24.86568, from rf2 is 24.59434
+
+save.plots <- vector(mode="list", length=26)
+save.avgimp <- vector(mode="list", length=26)
+
+for (kk in 1:13){
+  
+  tempimp1 <- temp %>% filter(i==kk) 
+  
+  plot1 <- ggplot(data=tempimp1, aes(x=temp)) + geom_histogram() + 
+           xlab(paste0("V",kk," MeanDecreaseAccuracy")) + 
+           ggtitle("Histogram of MeanDecreaseAccuracy", subtitle=paste0("V",kk))
+  save.plots[[kk]] <- plot1
+  
+  tempimp2 <- tempimp1 %>% summarize(avg_meandecreaseacc=mean(temp))
+  save.avgimp[[kk]] <- tempimp2
+  
+  
+  
+  tempimp3 <- temp %>% filter(i==kk+13)
+  
+  plot2 <- ggplot(data=tempimp3, aes(x=temp)) + geom_histogram() + 
+           xlab(paste0("V",kk," MeanDecreaseGini")) + 
+           ggtitle("Histogram of MeanDecreaseGini", subtitle=paste0("V",kk))
+  save.plots[[kk+13]] <- plot2
+  
+  tempimp4 <- tempimp3 %>% summarize(avg_meandecreasegini=mean(temp))
+  save.avgimp[[kk+13]] <- tempimp4
+}
+
+save.avgimp[[14]]
+save.plots[[14]]
+
+
+allimps <- as.vector(unlist(save.avgimp))
+allimps[1:13] #by meanDecAcc, v6 most imp then v13 (rm, lstat)
+allimps[14:26] #same for meanDecGini
+
+
