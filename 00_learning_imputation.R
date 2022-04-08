@@ -38,3 +38,4 @@ d2_knnImp$chas2_knnImp <- round((d2_knnImp$chas2 * 0.2559832) + 0.07032967)
 d$chasImp <- d2_knnImp$chas2_knnImp
 d$check <- d$chas - d$chasImp #incorrect 3/51 = 6%
 
+#TODO: functionalize and clean up the above (%missing, var name, reverse scaling, etc.)
